@@ -28,6 +28,7 @@ public class Faker {
     private final ChuckNorris chuckNorris;
     private final Color color;
     private final Commerce commerce;
+    private final Beauty beauty;
     private final Company company;
     private final Crypto crypto;
     private final IdNumber idNumber;
@@ -36,6 +37,7 @@ public class Faker {
     private final Code code;
     private final Finance finance;
     private final DateAndTime dateAndTime;
+    private final ISODateTime isoDateTime;
     private final Educator educator;
     private final Shakespeare shakespeare;
     private final Superhero superhero;
@@ -44,6 +46,7 @@ public class Faker {
     private final Beer beer;
     private final University university;
     private final Cat cat;
+    private final Chemistry chemistry;
 
     public Faker() {
         this(Locale.ENGLISH);
@@ -77,10 +80,12 @@ public class Faker {
         this.company = new Company(this);
         this.crypto = new Crypto(this);
         this.commerce = new Commerce(this);
+        this.beauty = new Beauty(this);
         this.options = new Options(this);
         this.code = new Code(this);
         this.finance = new Finance(this);
         this.dateAndTime = new DateAndTime(this);
+        this.isoDateTime = new ISODateTime(this);
         this.educator = new Educator(this);
         this.shakespeare = new Shakespeare(this);
         this.superhero = new Superhero(this);
@@ -89,6 +94,7 @@ public class Faker {
         this.beer = new Beer(this);
         this.university = new University(this);
         this.cat = new Cat(this);
+        this.chemistry = new Chemistry(this);
     }
 
     /**
@@ -217,6 +223,10 @@ public class Faker {
         return commerce;
     }
 
+    public Beauty beauty() {
+        return beauty;
+    }
+
     public Company company() {
         return company;
     }
@@ -247,6 +257,10 @@ public class Faker {
 
     public DateAndTime date() {
         return dateAndTime;
+    }
+
+    public ISODateTime isoDateTime() {
+        return isoDateTime;
     }
 
     public Educator educator() {
@@ -281,6 +295,14 @@ public class Faker {
         return cat;
     }
 
+    public Chemistry chemistry() { return chemistry; }
+
+    /**
+     * Resolves a key in the format of class.method_name
+     *
+     * @param key
+     * @return
+     */
     public String resolve(String key) {
         return this.fakeValuesService.resolve(key, this, this);
     }
@@ -288,7 +310,7 @@ public class Faker {
     /**
      * Allows the evaluation of native YML expressions to allow you to build your own.
      *
-     * The following are valid expressions: 
+     * The following are valid expressions:
      * <ul>
      *     <li>#{regexify '(a|b){2,3}'}</li>
      *     <li>#{regexify '\\.\\*\\?\\+'}</li>

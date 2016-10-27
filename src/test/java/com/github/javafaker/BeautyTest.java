@@ -15,7 +15,9 @@ public class BeautyTest extends AbstractFakerTest {
 
     @Test
     public void productName() throws Exception {
-        assertThat(faker.beauty().productName(), matchesRegularExpression("^\\w+\\s\\w+\\s\\w+$"));
+        for (int i= 0; i<10; i++) {
+            assertThat(faker.beauty().productName(), matchesRegularExpression("^(\\w+\\s){2,}\\w+$"));
+        }
     }
 
 }

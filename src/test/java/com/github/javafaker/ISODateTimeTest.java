@@ -127,8 +127,6 @@ public class ISODateTimeTest extends AbstractFakerTest {
 
     @Test
     public void between_same_dates() throws Exception {
-        when(randomService.nextLong(0L)).thenThrow(new IllegalArgumentException()); // For newest value
-
         ZonedDateTime result = isoDateTime.between(PRESENT, PRESENT);
         assertTrue(result.isEqual(PRESENT));
     }

@@ -3,10 +3,10 @@
     <groupId>com.github.javafaker</groupId>
     <artifactId>javafaker</artifactId>
     <packaging>jar</packaging>
-    <version>0.11-SNAPSHOT-CB</version>
+    <version>0.12-SNAPSHOT-CB</version>
     <name>Java Faker</name>
     <description>
-    	This library is a port of Ruby's stympy/faker gem (as well as Perl's Data::Faker library) that generates fake data.
+        This library is a port of Ruby's stympy/faker gem (as well as Perl's Data::Faker library) that generates fake data.
         It's useful when you're developing a new project and need some pretty data for showcase.
     </description>
     <url>http://github.com/DiUS/java-faker</url>
@@ -53,7 +53,7 @@
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
-            <version>3.4</version>
+            <version>3.5</version>
         </dependency>
         <dependency>
             <groupId>com.github.bmoliveira</groupId>
@@ -97,32 +97,14 @@
         </dependency>
         <dependency>
             <groupId>org.mockito</groupId>
-            <artifactId>mockito-all</artifactId>
-            <version>1.10.19</version>
+            <artifactId>mockito-core</artifactId>
+            <version>2.2.6</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>commons-validator</groupId>
             <artifactId>commons-validator</artifactId>
             <version>1.5.1</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.powermock</groupId>
-            <artifactId>powermock-core</artifactId>
-            <version>1.6.4</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.powermock</groupId>
-            <artifactId>powermock-api-mockito</artifactId>
-            <version>1.6.4</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.powermock</groupId>
-            <artifactId>powermock-module-junit4</artifactId>
-            <version>1.6.4</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -168,8 +150,8 @@
                         </execution>
                     </executions>
                 </plugin>
-			</plugins>
-		</pluginManagement>
+            </plugins>
+        </pluginManagement>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

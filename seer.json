@@ -1,0 +1,9 @@
+{
+  "name": "Java Faker",
+  "commands": [
+    {
+      "title" : "Install",
+      "command": ["bash devops/mvn_install_dev.sh"]
+    }
+  ]
+}

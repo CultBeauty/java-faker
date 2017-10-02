@@ -3,7 +3,7 @@
 # The current directory we're in
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
-docker run --name faker-build --rm=true -it \
+docker run --name faker-build --rm=true -i \
     -e _JAVA_OPTIONS="-Duser.timezone=Europe/London" \
     -v $DIR/..:/srv \
     -v /var/lib/dev_cache/ivy2:/root/.ivy2 \

@@ -10,5 +10,5 @@ docker run --name faker-build --rm=true -i \
     -v /var/lib/dev_cache/m2:/root/.m2 \
     -v /var/lib/dev_cache/sbt:/root/.sbt \
     -w /srv \
-    docker.cultbeauty.org/cultbeauty/scala:8u144-2.12.3 \
+    docker.cultbeauty.org/cultbeauty/scala:8u152-2.12.4 \
     mvn install

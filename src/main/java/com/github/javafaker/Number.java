@@ -5,7 +5,7 @@ import java.math.BigDecimal;
 public class Number {
     private final Faker faker;
 
-    Number(Faker faker) {
+    protected Number(Faker faker) {
         this.faker = faker;
     }
 
@@ -27,7 +27,7 @@ public class Number {
      * @see Number#numberBetween(long, long) 
      */
     public int numberBetween(int min, int max) {
-        return decimalBetween(min,max).intValue();
+        return decimalBetween(min,max).setScale(0, BigDecimal.ROUND_HALF_DOWN).intValue();
     }
 
     /**

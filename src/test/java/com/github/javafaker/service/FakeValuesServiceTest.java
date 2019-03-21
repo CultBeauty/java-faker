@@ -16,7 +16,6 @@ import java.util.Locale;
 
 import static com.github.javafaker.matchers.MatchesRegularExpression.matchesRegularExpression;
 import static org.hamcrest.Matchers.*;
-import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.*;
@@ -35,7 +34,7 @@ public class FakeValuesServiceTest extends AbstractFakerTest {
 
         // always return the first element
         when(randomService.nextInt(anyInt())).thenReturn(0);
-        
+
         fakeValuesService = spy(new FakeValuesService(new Locale("test"), randomService));
     }
 
@@ -74,11 +73,11 @@ public class FakeValuesServiceTest extends AbstractFakerTest {
     public void safeFetchShouldReturnEmptyStringWhenPropertyDoesntExist() {
         assertThat(fakeValuesService.safeFetch("property.dummy2", ""), isEmptyString());
     }
-    
+
     @Test
     public void bothify2Args() {
         final DummyService dummy = mock(DummyService.class);
-        
+
         Faker f = new Faker();
 
         String value = fakeValuesService.resolve("property.bothify_2", dummy, f);
@@ -90,7 +89,16 @@ public class FakeValuesServiceTest extends AbstractFakerTest {
         final DummyService dummy = mock(DummyService.class);
 
         String value = fakeValuesService.resolve("property.regexify1", dummy, faker);
-        assertThat(value, either(is("55")).or(is("44")).or(is("45")).or(is("54")));
+        assertThat(value, isOneOf("55", "44", "45", "54"));
+        verify(faker).regexify("[45]{2}");
+    }
+
+    @Test
+    public void regexifySlashFormatDirective() {
+        final DummyService dummy = mock(DummyService.class);
+
+        String value = fakeValuesService.resolve("property.regexify_slash_format", dummy, faker);
+        assertThat(value, isOneOf("55", "44", "45", "54"));
         verify(faker).regexify("[45]{2}");
     }
 
@@ -99,10 +107,9 @@ public class FakeValuesServiceTest extends AbstractFakerTest {
         final DummyService dummy = mock(DummyService.class);
 
         String value = fakeValuesService.resolve("property.regexify_cell", dummy, faker);
-        assertThat(value, either(is("479")).or(is("459")));
+        assertThat(value, isOneOf("479", "459"));
         verify(faker).regexify("4[57]9");
     }
-
 
     @Test
     public void resolveKeyToPropertyWithAPropertyWithoutAnObject() {
@@ -180,42 +187,34 @@ public class FakeValuesServiceTest extends AbstractFakerTest {
     @Test
     public void testLocaleChain() {
         final List<Locale> chain = fakeValuesService.localeChain(Locale.SIMPLIFIED_CHINESE);
-        
-        assertThat(chain, hasSize(3));
-        assertThat(chain.get(0), is(Locale.SIMPLIFIED_CHINESE));
-        assertThat(chain.get(1), is(Locale.CHINESE));
-        assertThat(chain.get(2), is(Locale.ENGLISH));
-        
+
+        assertThat(chain, contains(Locale.SIMPLIFIED_CHINESE, Locale.CHINESE, Locale.ENGLISH));
     }
-    
+
     @Test
     public void testLocaleChainEnglish() {
         final List<Locale> chain = fakeValuesService.localeChain(Locale.ENGLISH);
 
-        assertThat(chain, hasSize(1));
-        assertThat(chain.get(0), is(Locale.ENGLISH));
+        assertThat(chain, contains(Locale.ENGLISH));
     }
-    
+
     @Test
     public void testLocaleChainLanguageOnly() {
         final List<Locale> chain = fakeValuesService.localeChain(Locale.CHINESE);
 
-        assertThat(chain, hasSize(2));
-        assertThat(chain.get(0), is(Locale.CHINESE));
-        assertThat(chain.get(1), is(Locale.ENGLISH));
+        assertThat(chain, contains(Locale.CHINESE, Locale.ENGLISH));
     }
-    
-    
+
     @Test
     public void expressionWithInvalidFakerObject() {
-        expressionShouldFailWith("#{ObjectNotOnFaker.methodName}", 
-                "Can't find top level faker object named ObjectNotOnFaker.");
+        expressionShouldFailWith("#{ObjectNotOnFaker.methodName}",
+                "Unable to resolve #{ObjectNotOnFaker.methodName} directive.");
     }
-    
+
     @Test
     public void expressionWithValidFakerObjectButInvalidMethod() {
-        expressionShouldFailWith("#{Name.nonExistentMethod}", 
-                "Can't find method on Name called nonExistentMethod.");
+        expressionShouldFailWith("#{Name.nonExistentMethod}",
+                "Unable to resolve #{Name.nonExistentMethod} directive.");
     }
 
     /**
@@ -228,15 +227,15 @@ public class FakeValuesServiceTest extends AbstractFakerTest {
      */
     @Test
     public void expressionWithValidFakerObjectValidMethodInvalidArgs() {
-        expressionShouldFailWith("#{Number.number_between 'x','y'}", 
-                "Can't find method on Number called numberbetween.");
+        expressionShouldFailWith("#{Number.number_between 'x','y'}",
+                "Unable to resolve #{Number.number_between 'x','y'} directive.");
     }
-    
+
     /**
      * Two things are important here:
      * 1) the message in the exception should be USEFUL
      * 2) a {@link RuntimeException} should be thrown.
-     * 
+     *
      * if the message changes, it's ok to update the test provided
      * the two conditions above are still true.
      */
@@ -244,7 +243,7 @@ public class FakeValuesServiceTest extends AbstractFakerTest {
     public void expressionCompletelyUnresolvable() {
         expressionShouldFailWith("#{x}", "Unable to resolve #{x} directive.");
     }
-    
+
     private void expressionShouldFailWith(String expression, String errorMessage) {
         try {
             fakeValuesService.expression(expression, faker);
@@ -252,6 +251,21 @@ public class FakeValuesServiceTest extends AbstractFakerTest {
         } catch (RuntimeException re) {
             assertThat(re.getMessage(), is(errorMessage));
         }
+    }
+    @Test
+    public void resolveUsingTheSameKeyTwice() {
+        // #{hello} -> DummyService.hello
+
+        // given
+        final DummyService dummy = mock(DummyService.class);
+        when(dummy.hello()).thenReturn("1").thenReturn("2");
+
+        // when
+        final String actual = fakeValuesService.resolve("property.sameResolution", dummy, faker);
+
+        // then
+        assertThat(actual, is("1 2"));
+        verifyZeroInteractions(faker);
     }
 
     public static class DummyService {
@@ -262,15 +276,9 @@ public class FakeValuesServiceTest extends AbstractFakerTest {
         public String lastName() {
             return "Smith";
         }
-        
+
         public String hello() {
             return "Hello";
-        }
-    }
-
-    private static class AnotherDummyService {
-        public String firstName() {
-            return "John";
         }
     }
 }

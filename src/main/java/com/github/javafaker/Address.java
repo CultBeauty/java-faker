@@ -3,7 +3,7 @@ package com.github.javafaker;
 public class Address {
     private final Faker faker;
 
-    Address(Faker faker) {
+    protected Address(Faker faker) {
         this.faker = faker;
     }
 
@@ -33,6 +33,14 @@ public class Address {
 
     public String zipCode() {
         return faker.bothify(faker.fakeValuesService().resolve("address.postcode", this,faker));
+    }
+
+    public String zipCodeByState(String stateAbbr) {
+        return faker.fakeValuesService().resolve("address.postcode_by_state." + stateAbbr, this, faker);
+    }
+
+    public String countyByZipCode(String postCode) {
+        return faker.fakeValuesService().resolve("address.county_by_postcode." + postCode, this, faker);
     }
 
     public String streetSuffix() {
@@ -97,5 +105,9 @@ public class Address {
 
     public String buildingNumber() {
         return faker.numerify(faker.fakeValuesService().resolve("address.building_number", this, faker));
+    }
+
+    public String fullAddress() {
+        return faker.fakeValuesService().resolve("address.full_address", this, faker);
     }
 }

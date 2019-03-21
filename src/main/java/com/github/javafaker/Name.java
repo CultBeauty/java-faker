@@ -10,7 +10,7 @@ public class Name {
      * Internal constructor, not to be used by clients.  Instances of {@link Name} should be accessed via 
      * {@link Faker#name()}.
      */
-    Name(Faker faker) {
+    protected Name(Faker faker) {
         this.faker = faker;
     }
 
@@ -120,10 +120,13 @@ public class Name {
      * @see Name#lastName()
      */
     public String username() {
-        return StringUtils.join(new String[]{
+
+        String username = StringUtils.join(new String[]{
                 firstName().replaceAll("'", "").toLowerCase(),
                 ".",
                 lastName().replaceAll("'", "").toLowerCase()}
         );
+
+        return StringUtils.deleteWhitespace(username);
     }
 }

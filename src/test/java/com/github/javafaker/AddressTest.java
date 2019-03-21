@@ -16,6 +16,12 @@ public class AddressTest extends AbstractFakerTest {
     private static final char decimalSeparator = new DecimalFormatSymbols().getDecimalSeparator();
 
     @Test
+    public void testStreetAddressStartsWithNumber() {
+        final String streetAddressNumber = faker.address().streetAddress();
+        assertThat(streetAddressNumber, matchesRegularExpression("[0-9]+ .+"));
+    }
+
+    @Test
     public void testStreetAddressIsANumber() {
         final String streetAddressNumber = faker.address().streetAddressNumber();
         assertThat(streetAddressNumber, matchesRegularExpression("[0-9]+"));
@@ -46,7 +52,6 @@ public class AddressTest extends AbstractFakerTest {
             assertThat("Longitude is greater than 180", lon, lessThanOrEqualTo(180.0));
         }
     }
-
 
     @Test
     public void testTimeZone() {
@@ -89,5 +94,22 @@ public class AddressTest extends AbstractFakerTest {
         Faker firstFaker = new Faker(Locale.FRANCE, new Random(seed));
         Faker secondFaker = new Faker(Locale.FRANCE, new Random(seed));
         assertThat(firstFaker.address().city(), is(secondFaker.address().city()));
+    }
+
+    @Test
+    public void testFullAddress() {
+        assertThat(faker.address().fullAddress(), not(isEmptyOrNullString()));
+    }
+
+    @Test
+    public void testZipCodeByState() {
+        faker = new Faker(new Locale("en-US"));
+        assertThat(faker.address().zipCodeByState(faker.address().stateAbbr()), matchesRegularExpression("[0-9]{5}"));
+    }
+
+    @Test
+    public void testCountyByZipCode() {
+        faker = new Faker(new Locale("en-US"));
+        assertThat(faker.address().countyByZipCode(faker.address().zipCodeByState(faker.address().stateAbbr())), not(isEmptyOrNullString()));
     }
 }

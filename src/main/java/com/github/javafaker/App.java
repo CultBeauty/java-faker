@@ -3,7 +3,7 @@ package com.github.javafaker;
 public class App {
     private final Faker faker;
 
-    App(Faker faker) {
+    protected App(Faker faker) {
         this.faker = faker;
     }
 
@@ -16,6 +16,6 @@ public class App {
     }
 
     public String author() {
-        return faker.fakeValuesService().resolve("app.name", this, faker);
+        return faker.fakeValuesService().resolve("app.author", this, faker);
     }
 }

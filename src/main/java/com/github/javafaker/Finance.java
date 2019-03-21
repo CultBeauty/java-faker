@@ -11,17 +11,16 @@ import java.util.Map;
 public class Finance {
     private final Faker faker;
 
-    Finance(Faker faker) {
+    protected Finance(Faker faker) {
         this.faker = faker;
     }
 
 
     private static final Map<String, String> countryCodeToBasicBankAccountNumberPattern =
             createCountryCodeToBasicBankAccountNumberPatternMap();
-//
-    public String creditCard() {
-        CreditCardType type = randomCreditCardType();
-        final String key = String.format("credit_card.%s", type.toString().toLowerCase());
+
+    public String creditCard(CreditCardType creditCardType) {
+        final String key = String.format("finance.credit_card.%s", creditCardType.toString().toLowerCase());
         String value = faker.fakeValuesService().resolve(key, this, faker);
         final String template = faker.numerify(value);
 
@@ -41,6 +40,11 @@ public class Finance {
         }
         int luhnDigit = (10 - (luhnSum % 10)) % 10;
         return template.replace('\\', ' ').replace('/', ' ').trim().replace('L', String.valueOf(luhnDigit).charAt(0));
+    }
+
+    public String creditCard() {
+        CreditCardType type = randomCreditCardType();
+        return creditCard(type);
     }
 
     /**
@@ -81,8 +85,7 @@ public class Finance {
 
         StringBuilder sb = new StringBuilder();
         char[] characters = basis.toLowerCase().toCharArray();
-        for (int i = 0; i < characters.length; i++) {
-            char c = characters[i];
+        for (char c : characters) {
             if (Character.isLetter(c)) {
                 sb.append(String.valueOf((c - 'a') + 10));
             } else {

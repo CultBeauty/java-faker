@@ -1,17 +1,20 @@
 package com.github.javafaker;
 
+import com.github.javafaker.service.FakerIDN;
 import com.github.javafaker.service.RandomService;
 import org.apache.commons.lang3.StringUtils;
 
-import java.net.IDN;
 import java.util.Arrays;
+import java.util.List;
+import java.util.UUID;
 
 import static org.apache.commons.lang3.StringUtils.join;
+import static org.apache.commons.lang3.StringUtils.stripAccents;
 
 public class Internet {
     private final Faker faker;
-    
-    Internet(Faker faker) {
+
+    protected Internet(Faker faker) {
         this.faker = faker;
     }
 
@@ -20,9 +23,7 @@ public class Internet {
     }
 
     public String emailAddress(String localPart) {
-        return join(localPart,
-                "@",
-                IDN.toASCII(faker.fakeValuesService().resolve("internet.free_email", this, faker)));
+        return emailAddress(localPart, FakerIDN.toASCII(faker.fakeValuesService().resolve("internet.free_email", this, faker)));
     }
 
     public String safeEmailAddress() {
@@ -30,9 +31,11 @@ public class Internet {
     }
 
     public String safeEmailAddress(String localPart) {
-        return join(localPart, 
-                "@",
-                IDN.toASCII(faker.fakeValuesService().resolve("internet.safe_email", this, faker)));
+        return emailAddress(localPart, FakerIDN.toASCII(faker.fakeValuesService().resolve("internet.safe_email", this, faker)));
+    }
+
+    private String emailAddress(String localPart, String domain) {
+        return join(stripAccents(localPart), "@", domain);
     }
 
     public String domainName() {
@@ -40,7 +43,7 @@ public class Internet {
     }
 
     public String domainWord() {
-        return IDN.toASCII(faker.name().lastName().toLowerCase().replaceAll("'", ""));
+        return FakerIDN.toASCII(faker.name().lastName().toLowerCase().replaceAll("'", ""));
     }
 
     public String domainSuffix() {
@@ -51,7 +54,7 @@ public class Internet {
         return join(new Object[]{
                 "www",
                 ".",
-                IDN.toASCII(
+                FakerIDN.toASCII(
                         faker.name().firstName().toLowerCase().replaceAll("'", "") +
                                 "-" +
                                 domainWord()
@@ -253,7 +256,88 @@ public class Internet {
           .toString();
     }
 
+    /**
+     * @return a slug using '_' as the word separator and two {@link Lorem} words as the values
+     */
+    public String slug() {
+        return slug(faker.lorem().words(2), "_");
+    }
+
+    /**
+     * @param wordsOrNull if null, then 2 {@link Lorem} words
+     * @param glueOrNull  if null, "_"
+     * @return a slug string combining wordsOrNull with glueOrNull (ex. x_y)
+     */
+    public String slug(List<String> wordsOrNull, String glueOrNull) {
+        final String glue = glueOrNull == null
+                ? "_"
+                : glueOrNull;
+        final List<String> words = wordsOrNull == null
+                ? faker.lorem().words(2)
+                : wordsOrNull;
+
+        final StringBuilder slug = new StringBuilder();
+        for (int i = 0; i < words.size(); i++) {
+            if (i > 0) {
+                slug.append(glue);
+            }
+            slug.append(words.get(i));
+        }
+        return slug.toString();
+    }
+
+    /**
+     * Returns a UUID (type 4) as String.
+     * @return A UUID as String.
+     */
+    public String uuid() {
+        return UUID.randomUUID().toString();
+    }
+          
     private <T> T random(T[] src) {
         return src[faker.random().nextInt(src.length)];
+    }
+
+    public String userAgent(UserAgent userAgent) {
+        UserAgent agent = userAgent;
+
+        if(agent == null) {
+            agent = UserAgent.any();
+        }
+
+        String userAgentKey = "internet.user_agent." + agent.toString();
+        return faker.fakeValuesService().resolve(userAgentKey, this, faker);
+    }
+
+    public String userAgentAny() {
+        return userAgent(null);
+    }
+
+    public enum UserAgent {
+        AOL("aol"),
+        CHROME("chrome"),
+        FIREFOX("firefox"),
+        INTERNET_EXPLORER("internet_explorer"),
+        NETSCAPE("netscape"),
+        OPERA("opera"),
+        SAFARI("safari");
+
+        //Browser's name in corresponding yaml (internet.yml) file.
+        private String browserName;
+
+        UserAgent(String browserName) {
+            this.browserName = browserName;
+        }
+
+        private static UserAgent any() {
+            UserAgent[] agents = UserAgent.values();
+            int randomIndex = (int)(Math.random() * agents.length);
+            return agents[randomIndex];
+        }
+
+        @Override
+        public String toString() {
+            return browserName;
+        }
     }
 }

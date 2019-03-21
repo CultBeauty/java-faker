@@ -9,7 +9,7 @@ import java.util.TreeSet;
 public class Commerce {
     private final Faker faker;
 
-    Commerce(Faker faker) {
+    protected Commerce(Faker faker) {
         this.faker = faker;
     }
 
@@ -52,5 +52,15 @@ public class Commerce {
     public String price(double min, double max) {
         double price =  min + (faker.random().nextDouble() * (max - min));
         return new DecimalFormat("#0.00").format(price);
+    }
+
+    public String promotionCode() {
+        return promotionCode(6);
+    }
+
+    public String promotionCode(int digits) {
+        return StringUtils.join(faker.resolve("commerce.promotion_code.adjective"),
+                faker.resolve("commerce.promotion_code.noun"),
+                faker.number().digits(digits));
     }
 }

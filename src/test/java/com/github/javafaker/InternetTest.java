@@ -1,21 +1,33 @@
 package com.github.javafaker;
 
-import com.google.common.base.Predicate;
-import com.google.common.collect.Iterables;
+import com.github.javafaker.repeating.Repeat;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import org.apache.commons.validator.routines.EmailValidator;
+import org.hamcrest.Matchers;
+import org.hamcrest.core.IsNot;
 import org.junit.Test;
 
-import javax.annotation.Nullable;
 import java.util.List;
+import java.util.Locale;
 
 import static com.github.javafaker.matchers.CountOfCharactersMatcher.countOf;
 import static com.github.javafaker.matchers.MatchesRegularExpression.matchesRegularExpression;
 import static java.lang.Integer.parseInt;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.anyOf;
+import static org.hamcrest.Matchers.both;
+import static org.hamcrest.Matchers.greaterThan;
+import static org.hamcrest.Matchers.greaterThanOrEqualTo;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.isEmptyOrNullString;
+import static org.hamcrest.Matchers.lessThan;
+import static org.hamcrest.Matchers.lessThanOrEqualTo;
+import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.startsWith;
 import static org.junit.Assert.assertThat;
 
 public class InternetTest extends AbstractFakerTest {
+
     @Test
     public void testEmailAddress() {
         String emailAddress = faker.internet().emailAddress();
@@ -29,7 +41,6 @@ public class InternetTest extends AbstractFakerTest {
         assertThat(EmailValidator.getInstance().isValid(emailAddress), is(true));
     }
 
-
     @Test
     public void testSafeEmailAddress() {
         List<String> emails = Lists.newArrayList();
@@ -39,13 +50,9 @@ public class InternetTest extends AbstractFakerTest {
             emails.add(emailAddress);
         }
         final String safeDomain = faker.resolve("internet.safe_email");
-        boolean foundSafeDomainEmail = Iterables.any(emails, new Predicate<String>() {
-            @Override
-            public boolean apply(@Nullable String s) {
-                return s.endsWith("@" + safeDomain);
-            }});
-        
-        assertThat("Should find at least one email from " + safeDomain, foundSafeDomainEmail, is(true));
+
+        assertThat("Should find at least one email from " + safeDomain, emails,
+                Matchers.hasItem(Matchers.endsWith("@" + safeDomain)));
     }
 
     @Test
@@ -58,13 +65,21 @@ public class InternetTest extends AbstractFakerTest {
             emails.add(emailAddress);
         }
         final String safeDomain = faker.resolve("internet.safe_email");
-        boolean foundSafeDomainEmail = Iterables.any(emails, new Predicate<String>() {
-            @Override
-            public boolean apply(@Nullable String s) {
-                return s.endsWith("@" + safeDomain);
-            }});
 
-        assertThat("Should find at least one email from " + safeDomain, foundSafeDomainEmail, is(true));
+        assertThat("Should find at least one email from " + safeDomain, emails,
+                Matchers.hasItem(Matchers.endsWith("@" + safeDomain)));
+    }
+
+    @Test
+    public void testEmailAddressDoesNotIncludeAccentsInTheLocalPart() {
+        String emailAddress = faker.internet().emailAddress("áéíóú");
+        assertThat(emailAddress, startsWith("aeiou@"));
+    }
+
+    @Test
+    public void testSafeEmailAddressDoesNotIncludeAccentsInTheLocalPart() {
+        String emailAddress = faker.internet().safeEmailAddress("áéíóú");
+        assertThat(emailAddress, startsWith("aeiou@"));
     }
 
     @Test
@@ -146,7 +161,6 @@ public class InternetTest extends AbstractFakerTest {
               matchesRegularExpression("[0-9a-fA-F]{2}(\\:([0-9a-fA-F]{1,4})){5}"));
         }
     }
-
 
     @Test
     public void testIpV4Address() {
@@ -232,5 +246,46 @@ public class InternetTest extends AbstractFakerTest {
             assertThat(parseInt(faker.internet().ipV6Cidr().split("\\/")[1]),
                     both(greaterThanOrEqualTo(1)).and(lessThan(128)));
         }
+    }
+
+    @Test
+    @Repeat(times=10)
+    public void testSlugWithParams() {
+        assertThat(faker.internet().slug(ImmutableList.of("a", "b"), "-"), matchesRegularExpression("[a-zA-Z]+\\-[a-zA-Z]+"));
+    }
+
+    @Test
+    @Repeat(times=10)
+    public void testSlug() {
+        assertThat(faker.internet().slug(), matchesRegularExpression("[a-zA-Z]+\\_[a-zA-Z]+"));
+    }
+
+    @Test
+    @Repeat(times=10)
+    public void testUuid() {
+        assertThat(faker.internet().uuid(), matchesRegularExpression("^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"));
+    }
+
+    @Test
+    @Repeat(times=100)
+    public void testFarsiIDNs() {
+        // in this case, we're just making sure Farsi doesn't blow up.
+        // there have been issues with Farsi not being produced.
+        final Faker f = new Faker(new Locale("fa"));
+        assertThat(f.internet().domainName(), not(isEmptyOrNullString()));
+        assertThat(f.internet().emailAddress(), not(isEmptyOrNullString()));
+        assertThat(f.internet().safeEmailAddress(), not(isEmptyOrNullString()));
+        assertThat(f.internet().url(), not(isEmptyOrNullString()));
+    }
+
+    @Test
+    public void testUserAgent() {
+        Internet.UserAgent[] agents = Internet.UserAgent.values();
+        for(Internet.UserAgent agent : agents) {
+            assertThat(faker.internet().userAgent(agent), not(isEmptyOrNullString()));
+        }
+
+        //Test faker.internet().userAgentAny() for random user_agent retrieval.
+        assertThat(faker.internet().userAgentAny(), not(isEmptyOrNullString()));
     }
 }

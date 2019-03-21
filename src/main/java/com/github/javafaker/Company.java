@@ -1,8 +1,8 @@
 package com.github.javafaker;
 
+import com.github.javafaker.service.FakerIDN;
 import org.apache.commons.lang3.StringUtils;
 
-import java.net.IDN;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,7 +12,7 @@ public class Company {
 
     private final Faker faker;
 
-    Company(Faker faker) {
+    protected Company(Faker faker) {
         this.faker = faker;
     }
 
@@ -72,7 +72,7 @@ public class Company {
         return join(new Object[]{
                 "www",
                 ".",
-                IDN.toASCII(domainName()),
+                FakerIDN.toASCII(domainName()),
                 ".",
                 domainSuffix()
         });

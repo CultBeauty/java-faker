@@ -4,10 +4,9 @@ Java Faker
 [![Maven Status](https://maven-badges.herokuapp.com/maven-central/com.github.javafaker/javafaker/badge.svg?style=flat)](http://mvnrepository.com/artifact/com.github.javafaker/javafaker)
 [![Build Status](https://travis-ci.org/DiUS/java-faker.svg?branch=master)](https://travis-ci.org/DiUS/java-faker)
 [![Coverage Status](https://coveralls.io/repos/DiUS/java-faker/badge.svg)](https://coveralls.io/r/DiUS/java-faker)
-[![Dependency Status](https://www.versioneye.com/user/projects/572c2f11a0ca35004baf861a/badge.svg?style=flat)](https://www.versioneye.com/user/projects/572c2f11a0ca35004baf861a)
 [![License](http://img.shields.io/:license-apache-brightgreen.svg)](http://www.apache.org/licenses/LICENSE-2.0.html)
 
-This library is a port of Ruby's stympy/faker gem (as well as Perl's Data::Faker library) that generates fake data.
+This library is a port of Ruby's [faker](https://github.com/stympy/faker) gem (as well as Perl's Data::Faker library) that generates fake data.
 It's useful when you're developing a new project and need some pretty data for showcase.
 
 Usage
@@ -18,31 +17,15 @@ In pom.xml, add the following xml stanza between `<dependencies> ... </dependenc
 <dependency>
     <groupId>com.github.javafaker</groupId>
     <artifactId>javafaker</artifactId>
-    <version>0.11</version>
+    <version>0.17.2</version>
 </dependency>
 ```
-
-Since version 0.11, the ```snake-yaml``` files are no longer included in the main jar.  If you still wish 
-to use the shaded jar, you need to use the 'deps' classifier in the Maven coordinates (shown below).
-```xml
-<dependency>
-    <groupId>com.github.javafaker</groupId>
-    <artifactId>javafaker</artifactId>
-    <version>0.11</version>
-    <classifier>deps</classifier>
-</dependency>
-```
-
 
 For gradle users, add the following to your build.gradle file.
 
 ```groovy
-repositories {
-    mavenCentral()
-}
-
 dependencies {
-    testCompile group: 'com.github.javafaker', name: 'javafaker', version: '0.11'
+    implementation 'com.github.javafaker:javafaker:0.17.2'
 }
 
 ```
@@ -66,8 +49,11 @@ http://dius.github.io/java-faker/apidocs/index.html
 
 Fakers
 -----
+* Ancient
 * Address
 * App
+* Artist
+* Avatar
 * Beer
 * Book
 * Bool
@@ -80,31 +66,65 @@ Fakers
 * Company
 * Crypto
 * DateAndTime
+* Demographic
+* Dog
+* DragonBall
 * Educator
+* Esports
+* File
 * Finance
 * Food
+* Friends
+* FunnyName
+* GameOfThrones
 * Hacker
+* HarryPotter
+* Hipster
+* HitchhikersGuideToTheGalaxy
+* Hobbit
+* HowIMetYourMother
 * IdNumber
 * Internet
+* Job
+* LeagueOfLegends
+* Lebowski
+* LordOfTheRings
 * Lorem
+* Matz
+* Music
 * Name
 * Number
 * Options
+* Overwatch
 * PhoneNumber
+* Pokemon
+* RickAndMorty
+* Robin
+* RockBand
 * Shakespeare
+* SlackEmoji
+* Space
+* StarTrek
+* Stock
 * Superhero
 * Team
+* TwinPeaks
 * University
+* Weather
+* Witcher
+* Yoda
+* Zelda
 
 Usage with Locales
 -----
 
 ```java
-Faker faker = new Faker(new Locale("{YOUR_LOCALE}"));
+Faker faker = new Faker(new Locale("YOUR_LOCALE"));
 ```
 
 Supported Locales
 -----
+* bg
 * ca
 * ca-CAT
 * da-DK
@@ -118,16 +138,22 @@ Supported Locales
 * en-CA
 * en-GB
 * en-IND
+* en-MS
 * en-NEP
+* en-NG
 * en-NZ
+* en-PAK
 * en-SG
 * en-UG
 * en-US
+* en-ZA
 * es
+* es-MX
 * fa
 * fi-FI
 * fr
 * he
+* in-ID
 * it
 * ja
 * ko
@@ -139,6 +165,8 @@ Supported Locales
 * ru
 * sk
 * sv
+* sv-SE
+* tr
 * uk
 * vi
 * zh-CN
@@ -150,4 +178,4 @@ TODO
 
 LICENSE
 -------
-Copyright (c) 2014 DiUS Computing Pty Ltd. See the LICENSE file for license rights and limitations.
+Copyright (c) 2018 DiUS Computing Pty Ltd. See the LICENSE file for license rights and limitations.

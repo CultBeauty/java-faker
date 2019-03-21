@@ -6,3 +6,4 @@ target
 *.iml
 .java-version
 .DS_Store
+/dependency-reduced-pom.xml

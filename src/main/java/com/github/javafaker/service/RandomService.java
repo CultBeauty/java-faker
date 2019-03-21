@@ -50,4 +50,8 @@ public class RandomService {
     public Boolean nextBoolean() {
         return random.nextBoolean();
     }
+
+    public Integer nextInt(int min, int max) {
+        return random.nextInt((max - min) + 1) + min;
+    }
 }

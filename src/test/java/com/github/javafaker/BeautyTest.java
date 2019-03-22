@@ -8,15 +8,10 @@ import static org.junit.Assert.*;
 
 public class BeautyTest extends AbstractFakerTest {
 
-    @Before
-    public void before() {
-        faker = new Faker();
-    }
-
     @Test
     public void productName() throws Exception {
         for (int i= 0; i<10; i++) {
-            assertThat(faker.beauty().productName(), matchesRegularExpression("^(\\w+\\s){2,}\\w+$"));
+            assertThat(faker.beauty().productName(), matchesRegularExpression("^([-\\w+\\s]){2,}\\w+$"));
         }
     }
 
